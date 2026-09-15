@@ -4,7 +4,7 @@ export default function App() {
   
   const [query, setQuery] = useState("facebook/react");
   const [token, setToken] = useState(() => localStorage.getItem("gh_token") || "");
-  const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
+  const [status, setStatus] = useState("idle"); 
   const [errorMsg, setErrorMsg] = useState("");
 
   const [repo, setRepo] = useState(null);
