@@ -92,5 +92,96 @@ export default function App() {
   if (topShare > 0.6) riskLevel = "risk";
   else if (topShare > 0.35) riskLevel = "caution";
 
+  return (
+    <>
+      <header className="page-header">
+        <h1>Repo Signals</h1>
+        <p>Analyze maintainer concentration and bus-factor risks on public GitHub repositories.</p>
+      </header>
+
+      <main>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="repo-input">Repository (owner/repo)</label>
+            <input
+              id="repo-input"
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="e.g. facebook/react"
+              required
+            />
+          </div>
+
+          <button type="submit" style={{ marginTop: "1.5rem" }}>Analyze</button>
+
+          <div className="examples" style={{ gridColumn: "1 / -1", marginTop: "0.5rem" }}>
+            <span className="note" style={{ marginRight: 8 }}>Examples:</span>
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => {
+                  setQuery(ex);
+                  fetchRepoSignals(ex);
+                }}
+                style={{ marginRight: 6 }}
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ gridColumn: "1 / -1", marginTop: "0.5rem" }}>
+            <label htmlFor="token-input">GitHub token (optional — raises rate limit)</label>
+            <input
+              id="token-input"
+              type="password"
+              value={token}
+              onChange={(e) => saveToken(e.target.value)}
+              placeholder="ghp_..."
+            />
+          </div>
+        </form>
+
+        <p role="status" aria-live="polite" className={status === "error" ? "status-error" : "status"}>
+          {status === "loading" && "Loading repository metrics…"}
+          {status === "error" && errorMsg}
+        </p>
+
+        {rateLimitRemaining !== null && (
+          <p className="status" style={{ fontSize: "0.9rem", marginTop: 6 }}>
+            Rate limit: {rateLimitRemaining}/{rateLimitLimit} — resets {rateLimitReset ? new Date(rateLimitReset * 1000).toLocaleTimeString() : "soon"}.
+          </p>
+        )}
+
+        {status === "success" && repo && (
+          <article className="panel">
+            <span className={`badge badge--${riskLevel}`}>{Math.round(topShare * 100)}% Top Share</span>
+            <h2>{repo.full_name}</h2>
+            <p>{repo.description || "No description provided."}</p>
+
+            <h3>Top contributors</h3>
+            <ul>
+              {topThree.map((c) => (
+                <li key={c.login}>
+                  <a href={c.html_url} target="_blank" rel="noreferrer">{c.login}</a> — {c.contributions} commits
+                </li>
+              ))}
+            </ul>
+            <p className="note">
+              Top contributor made {Math.round(topShare * 100)}% of commits sampled from{" "}
+              {contributors.length === 100 ? "100+" : contributors.length} contributors.
+              This is commit count only — not code quality or review effort.
+            </p>
+          </article>
+        )}
+      </main>
+
+      <footer>
+        <p>Data from the public GitHub API. Results are a sample, not full history.</p>
+      </footer>
+    </>
+  );
 }
 
