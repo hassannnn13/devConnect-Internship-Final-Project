@@ -80,5 +80,17 @@ export default function App() {
     e.preventDefault();
     fetchRepoSignals(query);
   };
+
+  const totalCommits = contributors.reduce((sum, c) => sum + c.contributions, 0);
+  const topShare = totalCommits > 0 && contributors.length > 0 
+    ? contributors[0].contributions / totalCommits 
+    : 0;
+  
+  const topThree = contributors.slice(0, 3);
+
+  let riskLevel = "healthy";
+  if (topShare > 0.6) riskLevel = "risk";
+  else if (topShare > 0.35) riskLevel = "caution";
+
 }
 
