@@ -3,7 +3,8 @@
 
 A focused React + Vite application that fetches repository metadata and contributor activity from the public GitHub REST API to surface simple maintenance signals (top contributors and a basic risk score).
 
-This README describes what the project does, how to run it locally, what it intentionally omits, and the checklist for final submission.
+Github Repo Link: https://github.com/hassannnn13/devConnect-Internship-Final-Project.git
+Deploy Link: git-repository-explorer-1o1h2btfc-hassanidrees093-5974.vercel.app
 
 ## Key features
 
