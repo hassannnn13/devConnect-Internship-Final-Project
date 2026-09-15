@@ -21,5 +21,64 @@ export default function App() {
     setToken(val);
     localStorage.setItem("gh_token", val);
   };
+
+  const updateRateLimits = (headers) => {
+    const limit = headers.get("x-ratelimit-limit");
+    const remaining = headers.get("x-ratelimit-remaining");
+    const reset = headers.get("x-ratelimit-reset");
+    
+    if (limit) setRateLimitLimit(limit);
+    if (remaining) setRateLimitRemaining(remaining);
+    if (reset) setRateLimitReset(reset);
+  };
+
+    const fetchRepoSignals = async (targetRepo) => {
+    if (!targetRepo.includes("/")) {
+      setStatus("error");
+      setErrorMsg("Please enter a valid target in 'owner/repository' format.");
+      return;
+    }
+
+    setStatus("loading");
+    setErrorMsg("");
+    setRepo(null);
+    setContributors([]);
+
+    const headers = token ? { Authorization: `token ${token}` } : {};
+
+    try {
+      const repoRes = await fetch(`https://api.github.com/repos/${targetRepo}`, { headers });
+      updateRateLimits(repoRes.headers);
+
+      if (!repoRes.ok) {
+        if (repoRes.status === 404) throw new Error("Repository not found or private.");
+        if (repoRes.status === 403) throw new Error("GitHub API rate limit exceeded. Add a personal access token.");
+        throw new Error(`GitHub API error (${repoRes.status}).`);
+      }
+
+      const repoData = await repoRes.json();
+
+      const contribRes = await fetch(`https://api.github.com/repos/${targetRepo}/contributors?per_page=100`, { headers });
+      updateRateLimits(contribRes.headers);
+
+      if (!contribRes.ok) {
+        throw new Error("Unable to retrieve contributor metrics for this repository.");
+      }
+
+      const contribData = await contribRes.json();
+
+      setRepo(repoData);
+      setContributors(Array.isArray(contribData) ? contribData : []);
+      setStatus("success");
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err.message || "An unexpected error occurred while fetching data.");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetchRepoSignals(query);
+  };
 }
 
