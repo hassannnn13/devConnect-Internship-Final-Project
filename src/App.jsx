@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const EXAMPLES = ["facebook/react", "vuejs/core", "expressjs/express"];
 
 export default function App() {
