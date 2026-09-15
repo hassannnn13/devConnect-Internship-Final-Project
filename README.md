@@ -1,13 +1,13 @@
-# Repo Signals — GitHub Repository Explorer
+# GitHub Repository Explorer
 
-A small app to inspect GitHub repositories and surface maintenance signals (top contributors, commit share, risk level).
+A small app to inspect GitHub repositories and surface maintenance signals.
 
 ## Problem
 It's hard to know who actually maintains a repository from the GitHub UI. This app helps quickly answer: who are the top contributors, and how concentrated are commits?
 
 ## What it does
 - Look up a public GitHub repository by `owner/repo`.
-- Shows repo metadata, top contributors (sample), and a simple risk score based on commit share.
+- Shows repo metadata, top contributors, and a simple risk score based on commit share.
 - Handles common failure modes (404, rate limit, GitHub/server errors, network errors).
  - Search GitHub repositories by keyword and view useful fields: name, description, stars, forks, language, open issues, and link to GitHub.
  - Sort search results by "Most stars", "Most forks", or "Recently updated".
@@ -26,7 +26,7 @@ npm install
 npm run dev
 ```
 
-4. Open the app at `http://localhost:5173`.
+4. Open the app at `http://localhost:5175`.
 
 ## Using the search
 
