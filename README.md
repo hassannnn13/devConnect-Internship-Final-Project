@@ -1,59 +1,57 @@
+
 # GitHub Repository Explorer
 
-A small React app that looks up a public GitHub repository (by `owner/repo`) and surfaces simple maintenance signals: repository metadata, top contributors, and a basic risk score based on commit concentration.
+A focused React + Vite application that fetches repository metadata and contributor activity from the public GitHub REST API to surface simple maintenance signals (top contributors and a basic risk score).
 
-## What it does
+This README describes what the project does, how to run it locally, what it intentionally omits, and the checklist for final submission.
 
-- Lookup a repository by `owner/repo` (example presets included).
-- Fetch repository metadata and up to 100 contributors from the GitHub REST API.
-- Calculate a simple "top contributor share" risk score and render top contributors.
-- Show GitHub API rate-limit headers and accept an optional personal access token to raise limits.
+## Key features
 
-## Quick start
+- Lookup a repository by `owner/repo` (UI includes example presets).
+- Fetch repository metadata and up to 100 contributors via the GitHub API.
+- Compute a "top contributor share" and display a risk badge (`healthy`, `caution`, `risk`).
+- Display rate-limit headers and accept an optional GitHub personal access token to increase request quota.
+- Basic error handling for 404 (not found), 403 (rate limit), and other network/API errors.
 
-1. Clone the repository and enter the project folder.
-2. Install dependencies:
+## Run locally 
 
-```bash
-npm install
-```
+1. Install deps: `npm install`
+2. Start dev server: `npm run dev`
+3. Open the Local URL Vite prints (usually `http://localhost:5173`).
 
-3. Start the development server:
-
-```bash
-npm run dev
-```
-
-4. Open the Local URL printed by Vite (commonly `http://localhost:5173`). Vite will auto-select another free port if the default is in use.
-
-Useful scripts (in `package.json`):
-
-- `npm run dev` — start Vite dev server (hot reload)
-- `npm run build` — build production bundle to `dist`
-- `npm run preview` — preview production build locally
-- `npm run lint` — run `oxlint` (scaffolded linter)
+Useful scripts: `dev`, `build`, `preview`, `lint` (see `package.json`).
 
 ## GitHub token (optional)
 
-Create a personal access token at https://github.com/settings/tokens (no scopes required for public repo metadata). Paste it into the "GitHub token" field in the app. The token is stored only in `localStorage` for this browser.
+If you find API rate limits (403) while testing, create a personal access token at https://github.com/settings/tokens and paste it into the "GitHub token" field in the app. The token is saved to `localStorage` in the browser.
 
 ## Troubleshooting
 
-- Blank page after the dev server starts: open DevTools Console (F12) and paste any runtime errors here.
-- App mounting: `src/main.jsx` mounts the app into `#root` in `index.html` — ensure that file exists and that `src/main.jsx` is unchanged.
-- Missing React hooks error: ensure `src/App.jsx` imports `useState` and `useEffect` (this repo includes that fix).
-- Dev server exits with `-1073741510` on Windows: this often indicates the process was terminated (Ctrl+C) or killed by another program — re-run `npm run dev` and watch for antivirus or system activity.
-- Port in use: Vite will pick a free port automatically; open the `Local` URL printed.
+- Blank page: open DevTools Console (F12) and paste errors here.
+- Dev server not starting: run `npm install` then `npm run dev` and paste terminal output.
+- Port conflicts: Vite prints the actual Local URL it uses — open that URL.
+- Windows exit code `-1073741510`: this typically means the process was terminated externally; check for manual Ctrl+C, antivirus, or other tools killing child processes.
 
-If problems persist, paste the full terminal output from `npm run dev` and any browser console errors and I will help debug.
+If you still see issues, paste the full terminal output and any console errors and I will debug.
 
-## Data limitations
+## Data limitations 
 
-- Contributors are fetched from the GitHub contributors endpoint (paginated). The app requests up to 100 contributors — this is a sample, not full history.
-- Commit counts reflect the contributors endpoint and do not measure code quality, review effort, or file-level ownership.
+- Contributors are a paginated sample (up to 100), not full history.
+- Commit counts are a rough proxy — not a measure of quality or review effort.
+- Client-only app; no server-side persistence.
 
-## Scope
+## Submission checklist 
 
-- No server-side authentication or persisted settings beyond the optional token in `localStorage`.
+Ensure the following before submitting. Items marked **Action** need your input.
+
+- **Repository history:** multiple focused commits exist and reflect development. (You provided `git log --oneline`.)
+- **README:** Present and explains purpose, how to run, and limitations. (Done)
+- **Failure handling:** The app catches and surfaces 404/403/network errors. (Done)
+- **Demonstration:** **Action** — provide a deployed URL (Vercel/Netlify) or a 60–120s demo recording showing the app running and failure scenarios.
+
+## Author
+M. Hassan Idrees
+
+
 
 

@@ -2,6 +2,21 @@ import { useState, useEffect } from "react";
 
 const EXAMPLES = ["facebook/react", "vuejs/core", "expressjs/express"];
 
+async function fetchWithTimeout(url, options, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error("GitHub didn't respond in time — it may be slow right now. Try again.");
+    }
+    throw new Error("Couldn't reach GitHub — check your connection and try again.");
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export default function App() {
   
   const [query, setQuery] = useState("facebook/react");
@@ -34,7 +49,7 @@ export default function App() {
     if (reset) setRateLimitReset(reset);
   };
 
-    const fetchRepoSignals = async (targetRepo) => {
+  const fetchRepoSignals = async (targetRepo) => {
     if (!targetRepo.includes("/")) {
       setStatus("error");
       setErrorMsg("Please enter a valid target in 'owner/repository' format.");
@@ -49,7 +64,7 @@ export default function App() {
     const headers = token ? { Authorization: `token ${token}` } : {};
 
     try {
-      const repoRes = await fetch(`https://api.github.com/repos/${targetRepo}`, { headers });
+      const repoRes = await fetchWithTimeout(`https://api.github.com/repos/${targetRepo}`, { headers });
       updateRateLimits(repoRes.headers);
 
       if (!repoRes.ok) {
@@ -60,10 +75,11 @@ export default function App() {
 
       const repoData = await repoRes.json();
 
-      const contribRes = await fetch(`https://api.github.com/repos/${targetRepo}/contributors?per_page=100`, { headers });
+      const contribRes = await fetchWithTimeout(`https://api.github.com/repos/${targetRepo}/contributors?per_page=100`, { headers });
       updateRateLimits(contribRes.headers);
 
       if (!contribRes.ok) {
+        if (contribRes.status === 403) throw new Error("Rate limited while fetching contributors. Add a token or wait for the reset shown above.");
         throw new Error("Unable to retrieve contributor metrics for this repository.");
       }
 
@@ -159,23 +175,30 @@ export default function App() {
 
         {status === "success" && repo && (
           <article className="panel">
-            <span className={`badge badge--${riskLevel}`}>{Math.round(topShare * 100)}% Top Share</span>
             <h2>{repo.full_name}</h2>
             <p>{repo.description || "No description provided."}</p>
 
-            <h3>Top contributors</h3>
-            <ul>
-              {topThree.map((c) => (
-                <li key={c.login}>
-                  <a href={c.html_url} target="_blank" rel="noreferrer">{c.login}</a> — {c.contributions} commits
-                </li>
-              ))}
-            </ul>
-            <p className="note">
-              Top contributor made {Math.round(topShare * 100)}% of commits sampled from{" "}
-              {contributors.length === 100 ? "100+" : contributors.length} contributors.
-              This is commit count only — not code quality or review effort.
-            </p>
+            {contributors.length === 0 ? (
+              <p className="note">No contributor data available for this repository.</p>
+            ) : (
+              <>
+                <span className={`badge badge--${riskLevel}`}>{Math.round(topShare * 100)}% Top Share</span>
+
+                <h3>Top contributors</h3>
+                <ul>
+                  {topThree.map((c) => (
+                    <li key={c.login}>
+                      <a href={c.html_url} target="_blank" rel="noreferrer">{c.login}</a> — {c.contributions} commits
+                    </li>
+                  ))}
+                </ul>
+                <p className="note">
+                  Top contributor made {Math.round(topShare * 100)}% of commits sampled from{" "}
+                  {contributors.length === 100 ? "100+" : contributors.length} contributors.
+                  This is commit count only — not code quality or review effort.
+                </p>
+              </>
+            )}
           </article>
         )}
       </main>
