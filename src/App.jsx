@@ -97,14 +97,14 @@ export default function App() {
   return (
     <>
       <header className="page-header">
-        <h1>Repo Signals</h1>
-        <p>Analyze maintainer concentration and bus-factor risks on public GitHub repositories.</p>
+        <h1>GitHub Repository Signals</h1>
+        <p>Find out who is really building and maintaining any GitHub project.</p>
       </header>
 
       <main>
         <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="repo-input">Repository (owner/repo)</label>
+            <label htmlFor="repo-input">Repository (owner/repo):</label>
             <input
               id="repo-input"
               type="text"
@@ -135,13 +135,13 @@ export default function App() {
           </div>
 
           <div style={{ gridColumn: "1 / -1", marginTop: "0.5rem" }}>
-            <label htmlFor="token-input">GitHub token (optional — raises rate limit)</label>
+            <label htmlFor="token-input">GitHub Token (optional — increases your search limit):</label>
             <input
               id="token-input"
               type="password"
               value={token}
               onChange={(e) => saveToken(e.target.value)}
-              placeholder="ghp_..."
+              placeholder="Enter your GitHub token here..."
             />
           </div>
         </form>
@@ -181,7 +181,7 @@ export default function App() {
       </main>
 
       <footer>
-        <p>Data from the public GitHub API. Results are a sample, not full history.</p>
+        <p>Uses public GitHub data. Results are based on top contributors only.</p>
       </footer>
     </>
   );
