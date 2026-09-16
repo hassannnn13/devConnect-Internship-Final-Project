@@ -105,7 +105,11 @@ input {
 input:focus {
   outline: none;
   border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+}
+
+input:focus-visible {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.15);
 }
 
 button[type="submit"] {
@@ -117,11 +121,27 @@ button[type="submit"] {
   background: var(--accent-blue);
   color: #ffffff;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   white-space: nowrap;
 }
 
 button[type="submit"]:hover {
+  background: var(--accent-blue-hover);
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(9, 105, 218, 0.35);
+  outline-offset: 1px;
+}
+
+button:focus-visible,
+input:focus-visible {
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+}
+
+button[type="submit"]:focus-visible {
   background: var(--accent-blue-hover);
 }
 
@@ -154,6 +174,12 @@ button[type="submit"]:hover {
 .examples button:hover {
   background: #b6e3ff;
   border-color: var(--accent-blue);
+}
+
+.examples button:focus-visible {
+  background: #b6e3ff;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
 }
 
 /* Status Messages */
@@ -246,6 +272,11 @@ button[type="submit"]:hover {
 
 .panel a:hover {
   text-decoration: underline;
+}
+
+.panel a:focus-visible {
+  text-decoration: underline;
+  border-radius: 4px;
 }
 
 .note {
