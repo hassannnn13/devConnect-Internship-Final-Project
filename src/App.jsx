@@ -131,7 +131,9 @@ export default function App() {
             />
           </div>
 
-          <button type="submit" style={{ marginTop: "1.5rem" }}>Analyze</button>
+          <button type="submit" disabled={status === "loading"} style={{ marginTop: "1.5rem" }}>
+            {status === "loading" ? "Analyzing…" : "Analyze"}
+          </button>
 
           <div className="examples" style={{ gridColumn: "1 / -1", marginTop: "0.5rem" }}>
             <span className="note" style={{ marginRight: 8 }}>Examples:</span>
@@ -139,6 +141,8 @@ export default function App() {
               <button
                 key={ex}
                 type="button"
+                disabled={status === "loading"}
+                aria-label={`Load example repository ${ex}`}
                 onClick={() => {
                   setQuery(ex);
                   fetchRepoSignals(ex);
